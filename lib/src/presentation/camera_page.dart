@@ -79,6 +79,7 @@ class _CameraCameraState extends State<CameraCamera> {
         builder: (_, snapshot) => snapshot.data!.when(
             preview: (controller) => Stack(
                   children: [
+                    Text("DD"),
                     CameraCameraPreview(
                       enableZoom: widget.enableZoom,
                       key: UniqueKey(),
