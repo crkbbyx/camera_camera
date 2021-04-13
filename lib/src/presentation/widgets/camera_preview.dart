@@ -2,10 +2,14 @@ import 'package:camera_camera/src/presentation/controller/camera_camera_controll
 import 'package:camera_camera/src/presentation/controller/camera_camera_status.dart';
 import 'package:flutter/material.dart';
 
+import 'package:jobsitemobile/screens/app_detail_screen.dart';
+
+
 class CameraCameraPreview extends StatefulWidget {
   final void Function(String value)? onFile;
   final CameraCameraController controller;
   final bool enableZoom;
+
   CameraCameraPreview({
     Key? key,
     this.onFile,
@@ -34,61 +38,91 @@ class _CameraCameraPreviewState extends State<CameraCameraPreview> {
   Widget build(BuildContext context) {
     return ValueListenableBuilder<CameraCameraStatus>(
       valueListenable: widget.controller.statusNotifier,
-      builder: (_, status, __) => status.when(
-          success: (camera) => GestureDetector(
-                onScaleUpdate: (details) {
-                  widget.controller.setZoomLevel(details.scale);
-                },
-                child: Stack(
-                  children: [
-                    Center(child: widget.controller.buildPreview()),
-                    if (widget.enableZoom)
-                      Positioned(
-                        bottom: 96,
-                        left: 0.0,
-                        right: 0.0,
-                        child: CircleAvatar(
-                          radius: 20,
-                          backgroundColor: Colors.black.withOpacity(0.6),
-                          child: IconButton(
-                            icon: Center(
-                              child: Text(
-                                "${camera.zoom.toStringAsFixed(1)}x",
-                                style: TextStyle(
-                                    color: Colors.white, fontSize: 12),
-                              ),
-                            ),
-                            onPressed: () {
-                              widget.controller.zoomChange();
-                            },
-                          ),
-                        ),
-                      ),
-                    if (widget.controller.flashModes.length > 1)
-                      Align(
-                        alignment: Alignment.bottomLeft,
-                        child: Padding(
-                          padding: const EdgeInsets.all(32.0),
-                          child: CircleAvatar(
-                            radius: 20,
-                            backgroundColor: Colors.black.withOpacity(0.6),
-                            child: IconButton(
-                              onPressed: () {
-                                widget.controller.changeFlashMode();
-                              },
-                              icon: Icon(
-                                camera.flashModeIcon,
-                                color: Colors.white,
+      builder: (_, status, __) =>
+          status.when(
+              success: (camera) =>
+                  GestureDetector(
+                    onScaleUpdate: (details) {
+                      widget.controller.setZoomLevel(details.scale);
+                    },
+                    child: Stack(
+                      children: [
+                        Center(child: widget.controller.buildPreview()),
+                        if (widget.enableZoom)
+                          Positioned(
+                            bottom: 96,
+                            left: 0.0,
+                            right: 0.0,
+                            child: CircleAvatar(
+                              radius: 20,
+                              backgroundColor: Colors.black.withOpacity(0.6),
+                              child: IconButton(
+                                icon: Center(
+                                  child: Text(
+                                    "${camera.zoom.toStringAsFixed(1)}x",
+                                    style: TextStyle(
+                                        color: Colors.white, fontSize: 12),
+                                  ),
+                                ),
+                                onPressed: () {
+                                  widget.controller.zoomChange();
+                                },
                               ),
                             ),
                           ),
-                        ),
-                      ),
-                    Align(
-                      alignment: Alignment.bottomCenter,
-                      child: Padding(
-                        padding: const EdgeInsets.only(bottom: 24),
-                        child: InkWell(
+                        if (widget.controller.flashModes.length > 1)
+                          Align(
+                            alignment: Alignment.bottomLeft,
+                            child: Padding(
+                              padding: const EdgeInsets.all(32.0),
+                              child: CircleAvatar(
+                                radius: 20,
+                                backgroundColor: Colors.black.withOpacity(0.6),
+                                child: IconButton(
+                                  onPressed: () {
+                                    widget.controller.changeFlashMode();
+                                  },
+                                  icon: Icon(
+                                    camera.flashModeIcon,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        Align(
+                          alignment: Alignment.bottomCenter,
+                          child: Padding(
+                              padding: const EdgeInsets.only(bottom: 24),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  InkWell(
+                                    onTap: () {
+                                      widget.controller.takePhoto();
+                                    },
+                                    child: CircleAvatar(
+                                      radius: 30,
+                                      backgroundColor: Colors.white,
+                                    ),
+                                  ),
+                                  ElevatedButton(
+                                    onPressed: () {
+                                      Navigator.of(context).pushNamed(
+                                        AppDetailScreen.routeName,
+                                        arguments: {
+                                          'appt_server_id': 179033,
+                                        },
+                                      );
+                                    },
+                                    style: ElevatedButton.styleFrom(padding: EdgeInsets.fromLTRB(8.0, 0, 0, 0), elevation: 8.0),
+                                    child: Text('Done'),
+                                  ),
+                                ],
+                              )
+
+/*                        InkWell(
                           onTap: () {
                             widget.controller.takePhoto();
                           },
@@ -96,19 +130,22 @@ class _CameraCameraPreviewState extends State<CameraCameraPreview> {
                             radius: 30,
                             backgroundColor: Colors.white,
                           ),
+                        ),*/
+                          ),
                         ),
-                      ),
+
+                      ],
                     ),
-                  ],
-                ),
-              ),
-          failure: (message, _) => Container(
-                color: Colors.black,
-                child: Text(message),
-              ),
-          orElse: () => Container(
-                color: Colors.black,
-              )),
+                  ),
+              failure: (message, _) =>
+                  Container(
+                    color: Colors.black,
+                    child: Text(message),
+                  ),
+              orElse: () =>
+                  Container(
+                    color: Colors.black,
+                  )),
     );
   }
 }
