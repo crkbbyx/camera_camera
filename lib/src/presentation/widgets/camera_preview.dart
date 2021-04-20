@@ -50,23 +50,14 @@ class _CameraCameraPreviewState extends State<CameraCameraPreview> {
                       children: [
                         Center(child: widget.controller.buildPreview()),
 
-                        Positioned(
-                          bottom: 0,
-                          left: 0.0,
-                          right: 0.0,
-                          child: ElevatedButton(
-                            onPressed: () {
-                              Navigator.of(context).pushNamed(
-                                AppDetailScreen.routeName,
-                                arguments: {
-                                  'appt_server_id': 179033,
-                                },
-                              );
-                            },
-                            style: ElevatedButton.styleFrom(padding: EdgeInsets.fromLTRB(8.0, 0, 0, 0), elevation: 0.0),
-                            child: Text('Done Taking Photos'),
-                          ),
-                        ),
+                        SafeArea(child: SizedBox(
+                          width: double.infinity, child: ElevatedButton(
+                          onPressed: () {
+                            Navigator.popUntil(context, ModalRoute.withName('/app-detail-screen'));
+                          },
+                          style: ElevatedButton.styleFrom(padding: EdgeInsets.fromLTRB(8.0, 0, 0, 0), elevation: 0.0),
+                          child: Text('Done Taking Photos'),
+                        ),),),
 
                         if (widget.enableZoom)
                           Positioned(
