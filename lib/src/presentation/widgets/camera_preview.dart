@@ -1,6 +1,7 @@
 import 'package:camera_camera/src/presentation/controller/camera_camera_controller.dart';
 import 'package:camera_camera/src/presentation/controller/camera_camera_status.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import 'package:jobsitemobile/screens/app_detail_screen.dart';
 
@@ -48,9 +49,28 @@ class _CameraCameraPreviewState extends State<CameraCameraPreview> {
                     child: Stack(
                       children: [
                         Center(child: widget.controller.buildPreview()),
+
+                        Positioned(
+                          bottom: 0,
+                          left: 0.0,
+                          right: 0.0,
+                          child: ElevatedButton(
+                            onPressed: () {
+                              Navigator.of(context).pushNamed(
+                                AppDetailScreen.routeName,
+                                arguments: {
+                                  'appt_server_id': 179033,
+                                },
+                              );
+                            },
+                            style: ElevatedButton.styleFrom(padding: EdgeInsets.fromLTRB(8.0, 0, 0, 0), elevation: 0.0),
+                            child: Text('Done Taking Photos'),
+                          ),
+                        ),
+
                         if (widget.enableZoom)
                           Positioned(
-                            bottom: 96,
+                            bottom: 145,
                             left: 0.0,
                             right: 0.0,
                             child: CircleAvatar(
@@ -74,7 +94,7 @@ class _CameraCameraPreviewState extends State<CameraCameraPreview> {
                           Align(
                             alignment: Alignment.bottomLeft,
                             child: Padding(
-                              padding: const EdgeInsets.all(32.0),
+                              padding: const EdgeInsets.fromLTRB(32.0, 0.0, 0.0, 64.0),
                               child: CircleAvatar(
                                 radius: 20,
                                 backgroundColor: Colors.black.withOpacity(0.6),
@@ -93,7 +113,7 @@ class _CameraCameraPreviewState extends State<CameraCameraPreview> {
                         Align(
                           alignment: Alignment.bottomCenter,
                           child: Padding(
-                              padding: const EdgeInsets.only(bottom: 24),
+                              padding: const EdgeInsets.only(bottom: 64.0),
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -103,34 +123,17 @@ class _CameraCameraPreviewState extends State<CameraCameraPreview> {
                                       widget.controller.takePhoto();
                                     },
                                     child: CircleAvatar(
+                                      child: FaIcon(
+                                        FontAwesomeIcons.camera,
+                                        size: 24.0,
+                                      ),
                                       radius: 30,
                                       backgroundColor: Colors.white,
                                     ),
                                   ),
-                                  ElevatedButton(
-                                    onPressed: () {
-                                      Navigator.of(context).pushNamed(
-                                        AppDetailScreen.routeName,
-                                        arguments: {
-                                          'appt_server_id': 179033,
-                                        },
-                                      );
-                                    },
-                                    style: ElevatedButton.styleFrom(padding: EdgeInsets.fromLTRB(8.0, 0, 0, 0), elevation: 8.0),
-                                    child: Text('Done'),
-                                  ),
+
                                 ],
                               )
-
-/*                        InkWell(
-                          onTap: () {
-                            widget.controller.takePhoto();
-                          },
-                          child: CircleAvatar(
-                            radius: 30,
-                            backgroundColor: Colors.white,
-                          ),
-                        ),*/
                           ),
                         ),
 
