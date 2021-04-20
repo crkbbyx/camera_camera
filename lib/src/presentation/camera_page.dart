@@ -1,122 +1,154 @@
-import 'dart:async';
-import 'dart:io';
-
-import 'package:camera/camera.dart';
-import 'package:camera_camera/src/core/camera_bloc.dart';
-import 'package:camera_camera/src/core/camera_service.dart';
-import 'package:camera_camera/src/core/camera_status.dart';
-import 'package:camera_camera/src/presentation/widgets/camera_preview.dart';
-import 'package:camera_camera/src/shared/entities/camera_side.dart';
+import 'package:camera_camera/src/presentation/controller/camera_camera_controller.dart';
+import 'package:camera_camera/src/presentation/controller/camera_camera_status.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-class CameraCamera extends StatefulWidget {
-  ///Define your prefer resolution
-  final ResolutionPreset resolutionPreset;
+import 'package:jobsitemobile/screens/app_detail_screen.dart';
 
-  ///CallBack function returns File your photo taken
-  final void Function(File file) onFile;
 
-  ///Define types of camera side is enabled
-  final CameraSide cameraSide;
-
-  ///Define your FlashMode accepteds
-  final List<FlashMode> flashModes;
-
-  ///Enable zoom camera ( default = true )
+class CameraCameraPreview extends StatefulWidget {
+  final void Function(String value)? onFile;
+  final CameraCameraController controller;
   final bool enableZoom;
 
-  CameraCamera({
+  CameraCameraPreview({
     Key? key,
-    this.resolutionPreset = ResolutionPreset.ultraHigh,
-    required this.onFile,
-    this.cameraSide = CameraSide.all,
-    this.flashModes = FlashMode.values,
-    this.enableZoom = true,
+    this.onFile,
+    required this.controller,
+    required this.enableZoom,
   }) : super(key: key);
 
   @override
-  _CameraCameraState createState() => _CameraCameraState();
+  _CameraCameraPreviewState createState() => _CameraCameraPreviewState();
 }
 
-class _CameraCameraState extends State<CameraCamera> {
-  late CameraBloc bloc;
-  late StreamSubscription _subscription;
+class _CameraCameraPreviewState extends State<CameraCameraPreview> {
   @override
   void initState() {
-    bloc = CameraBloc(
-      flashModes: widget.flashModes,
-      service: CameraServiceImpl(),
-      onPath: (path) => widget.onFile(File(path)),
-      cameraSide: widget.cameraSide,
-    );
-    bloc.init();
-    _subscription = bloc.statusStream.listen((state) {
-      return state.when(
-          orElse: () {},
-          selected: (camera) async {
-            bloc.startPreview(widget.resolutionPreset);
-          });
-    });
+    widget.controller.init();
     super.initState();
   }
 
   @override
   void dispose() {
-    bloc.dispose();
-    //SystemChrome.setEnabledSystemUIOverlays(SystemUiOverlay.values);
-
-    _subscription.cancel();
+    widget.controller.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: Colors.black,
-      child: StreamBuilder<CameraStatus>(
-        stream: bloc.statusStream,
-        initialData: CameraStatusEmpty(),
-        builder: (_, snapshot) => snapshot.data!.when(
-            preview: (controller) => Stack(
-                  children: [
-                    Text("DD"),
-                    CameraCameraPreview(
-                      enableZoom: widget.enableZoom,
-                      key: UniqueKey(),
-                      controller: controller,
-                    ),
-                    if (bloc.status.preview.cameras.length > 1)
-                      Align(
-                        alignment: Alignment.bottomRight,
-                        child: Padding(
-                          padding: const EdgeInsets.all(32.0),
-                          child: InkWell(
-                            onTap: () {
-                              bloc.changeCamera();
+    return ValueListenableBuilder<CameraCameraStatus>(
+      valueListenable: widget.controller.statusNotifier,
+      builder: (_, status, __) =>
+          status.when(
+              success: (camera) =>
+                  GestureDetector(
+                    onScaleUpdate: (details) {
+                      widget.controller.setZoomLevel(details.scale);
+                    },
+                    child: Stack(
+                      children: [
+                        Center(child: widget.controller.buildPreview()),
+
+                        Positioned(
+                          bottom: 0,
+                          left: 0.0,
+                          right: 0.0,
+                          child: ElevatedButton(
+                            onPressed: () {
+                              Navigator.of(context).pushNamed(
+                                AppDetailScreen.routeName,
+                                arguments: {
+                                  'appt_server_id': 179033,
+                                },
+                              );
                             },
+                            style: ElevatedButton.styleFrom(padding: EdgeInsets.fromLTRB(8.0, 0, 0, 0), elevation: 0.0),
+                            child: Text('Done Taking Photos'),
+                          ),
+                        ),
+
+                        if (widget.enableZoom)
+                          Positioned(
+                            bottom: 145,
+                            left: 0.0,
+                            right: 0.0,
                             child: CircleAvatar(
                               radius: 20,
                               backgroundColor: Colors.black.withOpacity(0.6),
-                              child: Icon(
-                                Platform.isAndroid
-                                    ? Icons.flip_camera_android
-                                    : Icons.flip_camera_ios,
-                                color: Colors.white,
+                              child: IconButton(
+                                icon: Center(
+                                  child: Text(
+                                    "${camera.zoom.toStringAsFixed(1)}x",
+                                    style: TextStyle(
+                                        color: Colors.white, fontSize: 12),
+                                  ),
+                                ),
+                                onPressed: () {
+                                  widget.controller.zoomChange();
+                                },
                               ),
                             ),
                           ),
+                        if (widget.controller.flashModes.length > 1)
+                          Align(
+                            alignment: Alignment.bottomLeft,
+                            child: Padding(
+                              padding: const EdgeInsets.fromLTRB(32.0, 0.0, 0.0, 64.0),
+                              child: CircleAvatar(
+                                radius: 20,
+                                backgroundColor: Colors.black.withOpacity(0.6),
+                                child: IconButton(
+                                  onPressed: () {
+                                    widget.controller.changeFlashMode();
+                                  },
+                                  icon: Icon(
+                                    camera.flashModeIcon,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        Align(
+                          alignment: Alignment.bottomCenter,
+                          child: Padding(
+                              padding: const EdgeInsets.only(bottom: 64.0),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  InkWell(
+                                    onTap: () {
+                                      widget.controller.takePhoto();
+                                    },
+                                    child: CircleAvatar(
+                                      child: FaIcon(
+                                        FontAwesomeIcons.camera,
+                                        size: 24.0,
+                                      ),
+                                      radius: 30,
+                                      backgroundColor: Colors.white,
+                                    ),
+                                  ),
+
+                                ],
+                              )
+                          ),
                         ),
-                      )
-                  ],
-                ),
-            failure: (message, _) => Container(
-                  color: Colors.black,
-                  child: Text(message),
-                ),
-            orElse: () => Container(
-                  color: Colors.black,
-                )),
-      ),
+
+                      ],
+                    ),
+                  ),
+              failure: (message, _) =>
+                  Container(
+                    color: Colors.black,
+                    child: Text(message),
+                  ),
+              orElse: () =>
+                  Container(
+                    color: Colors.black,
+                  )),
     );
   }
 }
