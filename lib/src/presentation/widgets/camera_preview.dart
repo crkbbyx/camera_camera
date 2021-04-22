@@ -10,7 +10,6 @@ class CameraCameraPreview extends StatefulWidget {
   final void Function(String value)? onFile;
   final CameraCameraController controller;
   final bool enableZoom;
-
   CameraCameraPreview({
     Key? key,
     this.onFile,
@@ -23,6 +22,7 @@ class CameraCameraPreview extends StatefulWidget {
 }
 
 class _CameraCameraPreviewState extends State<CameraCameraPreview> {
+
   @override
   void initState() {
     widget.controller.init();
@@ -51,13 +51,24 @@ class _CameraCameraPreviewState extends State<CameraCameraPreview> {
                         Center(child: widget.controller.buildPreview()),
 
                         SafeArea(child: SizedBox(
-                          width: double.infinity, child: ElevatedButton(
-                          onPressed: () {
-                            Navigator.popUntil(context, ModalRoute.withName('/app-detail-screen'));
-                          },
-                          style: ElevatedButton.styleFrom(padding: EdgeInsets.fromLTRB(8.0, 0, 0, 0), elevation: 0.0),
-                          child: Text('Done Taking Photos'),
-                        ),),),
+                          height: 65.0,
+                          width: double.infinity,
+                          child: ElevatedButton.icon(
+
+                            icon: Icon(FontAwesomeIcons.checkDouble),
+                            label: Text('Done Taking Photos'),
+                            onPressed: () {
+                              Navigator.popUntil(context, ModalRoute.withName('/app-detail-screen'));
+                            },
+                            style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.only(
+                                topRight: Radius.circular(0.0),
+                                topLeft: Radius.circular(0.0),
+                                bottomRight: Radius.circular(0.0),
+                                bottomLeft: Radius.circular(0.0),
+                              ),
+                            ),padding: EdgeInsets.fromLTRB(0.0, 0, 0, 0), elevation: 0.0),
+                          ),),),
 
                         if (widget.enableZoom)
                           Positioned(
