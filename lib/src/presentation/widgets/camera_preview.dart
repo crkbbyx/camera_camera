@@ -26,6 +26,7 @@ class CameraCameraPreview extends StatefulWidget {
   final CameraCameraController controller;
   final bool enableZoom;
   final int? appt_server_id;
+  final bool? returns;
 
   CameraCameraPreview({
     Key? key,
@@ -33,6 +34,7 @@ class CameraCameraPreview extends StatefulWidget {
     required this.controller,
     required this.enableZoom,
     this.appt_server_id,
+    this.returns,
   }) : super(key: key);
 
   @override
@@ -43,6 +45,7 @@ class _CameraCameraPreviewState extends State<CameraCameraPreview> {
 
   bool doneDataFetchOnce = false;
   int? appt_server_id;
+  bool? returns;
 
   Future<List<String>>? futureList;
   List<String> itemList = [];
@@ -162,6 +165,7 @@ class _CameraCameraPreviewState extends State<CameraCameraPreview> {
                                 AppTechPhotosScreen.routeName,
                                 arguments: {
                                   'appt_server_id': widget.appt_server_id,
+                                  'returns': widget.returns,
                                 },
                               );
                               // Navigator.popUntil(context, ModalRoute.withName('/app-detail-screen'));
