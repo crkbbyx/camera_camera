@@ -26,6 +26,8 @@ class CameraCamera extends StatefulWidget {
   final bool enableZoom;
 
   final int? appt_server_id;
+  final bool? returns;
+
 
   CameraCamera({
     Key? key,
@@ -35,6 +37,7 @@ class CameraCamera extends StatefulWidget {
     this.flashModes = FlashMode.values,
     this.enableZoom = true,
     this.appt_server_id,
+    this.returns,
   }) : super(key: key);
 
   @override
@@ -87,6 +90,7 @@ class _CameraCameraState extends State<CameraCamera> {
                       key: UniqueKey(),
                       controller: controller,
                       appt_server_id: widget.appt_server_id,
+                      returns: widget.returns,
                     ),
 
                     if (bloc.status.preview.cameras.length > 1)
