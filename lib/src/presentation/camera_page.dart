@@ -19,12 +19,16 @@ class CameraCamera extends StatefulWidget {
   ///Define types of camera side is enabled
   final CameraSide cameraSide;
 
-  ///Define your FlashMode accepteds
+  ///Define your accepted [FlashMode]s
   final List<FlashMode> flashModes;
 
   ///Enable zoom camera ( default = true )
   final bool enableZoom;
 
+  ///Whether to allow audio recording. This can remove the microphone
+  ///permission on Android
+  final bool enableAudio;
+  
   final int? appt_server_id;
   final bool? returns;
 
@@ -36,6 +40,7 @@ class CameraCamera extends StatefulWidget {
     this.cameraSide = CameraSide.all,
     this.flashModes = FlashMode.values,
     this.enableZoom = true,
+    this.enableAudio = false,
     this.appt_server_id,
     this.returns,
   }) : super(key: key);
@@ -54,6 +59,7 @@ class _CameraCameraState extends State<CameraCamera> {
       service: CameraServiceImpl(),
       onPath: (path) => widget.onFile(File(path)),
       cameraSide: widget.cameraSide,
+      enableAudio: widget.enableAudio,
     );
     bloc.init();
     _subscription = bloc.statusStream.listen((state) {
