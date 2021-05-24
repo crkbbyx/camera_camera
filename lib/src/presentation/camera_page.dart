@@ -95,6 +95,7 @@ class _CameraCameraState extends State<CameraCamera> {
                       key: UniqueKey(),
                       controller: controller,
                       appt_server_id: widget.appt_server_id,
+                      returns: widget.returns,
                     ),
                     if (bloc.status.preview.cameras.length > 1)
                       Align(
