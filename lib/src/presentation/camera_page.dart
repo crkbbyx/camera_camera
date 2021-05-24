@@ -28,9 +28,6 @@ class CameraCamera extends StatefulWidget {
   ///Whether to allow audio recording. This can remove the microphone
   ///permission on Android
   final bool enableAudio;
-  
-  final int? appt_server_id;
-  final bool? returns;
 
   CameraCamera({
     Key? key,
@@ -40,8 +37,6 @@ class CameraCamera extends StatefulWidget {
     this.flashModes = FlashMode.values,
     this.enableZoom = true,
     this.enableAudio = false,
-    this.appt_server_id,
-    this.returns,
   }) : super(key: key);
 
   @override
@@ -94,22 +89,19 @@ class _CameraCameraState extends State<CameraCamera> {
                       enableZoom: widget.enableZoom,
                       key: UniqueKey(),
                       controller: controller,
-                      appt_server_id: widget.appt_server_id,
-                      returns: widget.returns,
                     ),
-
                     if (bloc.status.preview.cameras.length > 1)
                       Align(
                         alignment: Alignment.bottomRight,
                         child: Padding(
-                          padding: const EdgeInsets.fromLTRB(0.0, 0.0, 32.0, 64.0),
+                          padding: const EdgeInsets.all(32.0),
                           child: InkWell(
                             onTap: () {
                               bloc.changeCamera();
                             },
                             child: CircleAvatar(
                               radius: 20,
-                              backgroundColor: Colors.red.withOpacity(0.6),
+                              backgroundColor: Colors.black.withOpacity(0.6),
                               child: Icon(
                                 Platform.isAndroid
                                     ? Icons.flip_camera_android
