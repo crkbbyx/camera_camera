@@ -32,7 +32,6 @@ class CameraCamera extends StatefulWidget {
   final int? appt_server_id;
   final bool? returns;
 
-
   CameraCamera({
     Key? key,
     this.resolutionPreset = ResolutionPreset.ultraHigh,
