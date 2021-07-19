@@ -51,14 +51,16 @@ class _CameraCameraPreviewState extends State<CameraCameraPreview> {
   List<String> itemList = [];
   List<String> itemListDone = [];
 
-  Future<List<String>>? fetchList() async {
+Future<List<String>>? fetchList() async {
     //ApptFile().dummyThing();
     SharedPrefManagement prefs = SharedPrefManagement();
     await prefs.getCapturedPhotos().then((processCapturedPhotos) async {
+
       if(processCapturedPhotos != null) {
         processCapturedPhotos.forEach((myfile) async {
-          itemList.remove(myfile.toString());
-          itemList.add(myfile.toString());
+          var mySplitName = myfile.split("|");
+          itemList.remove(mySplitName[1].toString());
+          itemList.add(mySplitName[1].toString());
         });
       }
     });
